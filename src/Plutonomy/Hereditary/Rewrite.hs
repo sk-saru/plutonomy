@@ -15,6 +15,7 @@ module Plutonomy.Hereditary.Rewrite (
     isUnsaturatedApp,
     rewriteWithDefinitions,
     rewrite1WithDefinitions,
+    rewriteAllWithDefinitions,
 ) where
 
 import Data.Bifunctor  (bimap)
@@ -180,3 +181,10 @@ rewrite1WithDefinitions
     -> Term a n
     -> Term a n
 rewrite1WithDefinitions f = rewrite1With f definitionsOnLet definitionsEmpty
+
+rewriteAllWithDefinitions
+    :: Ord a
+    => (forall m. Definitions a m -> Term a m -> Maybe (Term a m))
+    -> Term a n
+    -> Term a n
+rewriteAllWithDefinitions f = rewriteAllWith f definitionsOnLet definitionsEmpty
