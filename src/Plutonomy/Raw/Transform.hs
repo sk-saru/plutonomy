@@ -19,7 +19,7 @@ module Plutonomy.Raw.Transform (
     TraceRewrite (..),
     -- * Single rewrites
     letFromLet,
-    unLetFromLet,
+    -- unLetFromLet,
     forceDelay,
     unForceDelay,
     unusedBinding,
@@ -1081,10 +1081,10 @@ letFromLet (Let x (Let y foo bar) body) = Just $
     Let y foo $ Let x bar (bump body)
 letFromLet _ = Nothing
 
-unLetFromLet :: Raw a n -> Maybe (Raw a n)
-unLetFromLet (Let y foo (Let x bar body)) = Just $
-    Let x (Let y foo bar) body
-unLetFromLet _ = Nothing
+-- unLetFromLet :: Raw a n -> Maybe (Raw a n)
+-- unLetFromLet (Let y foo (Let x bar body)) = Just $
+--     Let x (Let y foo bar) body
+-- unLetFromLet _ = Nothing
 
 -- | Force-Delay elimination.
 --
