@@ -176,7 +176,7 @@ test-suite plutonomy-tests
     , plutonomy
     , plutus-ledger-api
     , plutus-tx
-    , plutus-tx-plugin
+    -- , plutus-tx-plugin
     , tasty
 
   if True

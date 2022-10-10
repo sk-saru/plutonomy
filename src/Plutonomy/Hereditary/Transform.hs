@@ -16,6 +16,7 @@ module Plutonomy.Hereditary.Transform (
     floatOutAppArg,
     floatOutDelay,
     commBuiltin,
+    unCommBuiltin
 ) where
 
 import Control.Applicative (Const (..))
@@ -732,6 +733,12 @@ commBuiltin (Defn (Neutral (HeadBuiltin EqualsInteger) (App (Defn (Constant _)) 
 commBuiltin (Defn (Neutral (HeadBuiltin EqualsInteger) (x :<| y@(App (Defn (Constant _))) :<| sp))) =
     Just $ Defn $ Neutral (HeadBuiltin EqualsInteger) (y :<| x :<| sp)
 commBuiltin _ = Nothing
+
+-- | Commute commutative builtins so the constants are the first arguments.
+unCommBuiltin :: Term a n -> Maybe (Term a n)
+unCommBuiltin (Defn (Neutral (HeadBuiltin EqualsInteger) (y@(App (Defn (Constant _))) :<| x :<| sp))) =
+    Just $ Defn (Neutral (HeadBuiltin EqualsInteger) (x :<| y :<| sp))
+unCommBuiltin _ = Nothing
 
 -- | Inline constants.
 --
