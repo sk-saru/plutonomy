@@ -9,6 +9,7 @@ module Plutonomy.Hereditary.Transform (
     letZero,
     appError,
     etaForce,
+    contraEtaForce,
     etaFun,
     ifLambda,
     floatOutLambda,
@@ -216,7 +217,7 @@ isStrictInElim _ (E1 _)  = False
 -- -- ERROR
 --
 inlineSaturated' :: Ord a => Integer -> Term a n -> Term a n
-inlineSaturated' size = rewriteWithDefinitions (inlineSaturated size) where
+inlineSaturated' size = rewriteWithDefinitions (inlineSaturated size)
 
 inlineSaturated :: Ord a => Integer -> Definitions a m -> Term a m -> Maybe (Term a m)
 inlineSaturated size ctx (Defn (Neutral (HeadVar f) args))
@@ -497,6 +498,12 @@ etaForce ctx (Defn (Delay (Defn (Neutral h (ts :|> Force)))))
   where
     v = Defn (Neutral h ts)
 etaForce _ _ = Nothing
+
+contraEtaForce :: Definitions a n -> Term a n -> Maybe (Term a n)
+contraEtaForce ctx (Defn (Neutral h ts))
+    | isValue (definitionArity ctx) (const 0) (Defn (Neutral h ts))
+    = Just (Defn (Delay (Defn (Neutral h (ts :|> Force)))))
+contraEtaForce _ _ = Nothing
 
 -- | Eta reduce function.
 --
