@@ -19,7 +19,9 @@ module Plutonomy.Raw.Transform (
     TraceRewrite (..),
     -- * Single rewrites
     letFromLet,
+    unLetFromLet,
     forceDelay,
+    unForceDelay,
     unusedBinding,
     inlineUsedOnce,
     inlineUsedOnce',
@@ -1079,6 +1081,11 @@ letFromLet (Let x (Let y foo bar) body) = Just $
     Let y foo $ Let x bar (bump body)
 letFromLet _ = Nothing
 
+unLetFromLet :: Raw a n -> Maybe (Raw a n)
+unLetFromLet (Let y foo (Let x bar body)) = Just $
+    Let x (Let y foo bar) (bump body)
+unLetFromLet _ = Nothing
+
 -- | Force-Delay elimination.
 --
 -- >>> let term = force_ (delay_ "t")
@@ -1097,6 +1104,10 @@ letFromLet _ = Nothing
 forceDelay :: Raw a n -> Maybe (Raw a n)
 forceDelay (Force (Delay t)) = Just t
 forceDelay _                 = Nothing
+
+unForceDelay :: Raw a n -> Maybe (Raw a n)
+unForceDelay t = Just (Force (Delay t))
+unForceDelay _                 = Nothing
 
 -- | Unused binding elimination.
 --
